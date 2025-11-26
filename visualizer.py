@@ -1,13 +1,13 @@
 import pygame
 
 class Tela:
-    def __initi__(self, width, height, simulation):
+    def __initi__(self, width, height, grafos):
         pygame.init()
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Visualizador de Rede de Sensores")
 
         self.running = True
-        self.simulation = simulation
+        self.grafos = grafos
         self.display_radius = False
         self.display_paths = False
     
@@ -40,8 +40,16 @@ class Tela:
     def draw(self):
         self.screen.fill((255, 255, 255)) 
         self.draw_communication_lines()
-        self.draw_paths()
-        self.draw_sensors()
+        self.draw_Grafos()
         pygame.display.flip()
 
-    
+    def draw_Grafos(self):
+        if self.grafos is None:
+            return
+        
+        for sensor in self.grafos.vertices:
+
+            if sensor.central:
+                base_station = sensor
+            else:
+                x, y = sensor.get_posicao()

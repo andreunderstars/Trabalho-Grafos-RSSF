@@ -33,6 +33,9 @@ class Vertice:
     def gastar_energia(self, valor):
         self._bateria -= valor
 
+    def get_posicao(self):
+        return (self._pos_x, self._pos_y)
+
 class Grafo:
     def __init__(self):
         self.vertices = {}
@@ -91,7 +94,6 @@ class Grafo:
             if v_id != 0 and v._bateria <= 0:
                 return True
         return False
-
 
     def kruskal(self):
         n = len(self.vertices)

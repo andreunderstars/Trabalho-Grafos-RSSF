@@ -14,13 +14,27 @@ class Aresta:
         self._vezes_utilizada = 0
         self._consumo_total = 0.0
     
-    def gastar_energia(self):
+    def gastar_energia(self, grafo):
+        """
+        Atualiza o número de vezes que a aresta foi utilizada e seu consumo total com base nisso.
+        """
         self._vezes_utilizada += 1
         self._consumo_total = self._vezes_utilizada * self._consumo
-    
-    def peso_para_mst(self):
-        return self._distancia + self._consumo_total
 
+        grafo.vertices[self._u].gastar_energia(self._consumo)
+        grafo.vertices[self._v].gastar_energia(self._consumo)
+    
+    def peso_para_mst(self, grafo):
+        """
+        Retorna o peso da aresta para geração da MST.
+        """
+        energia_u = grafo.vertices[self._u]._bateria
+        energia_v = grafo.vertices[self._v]._bateria
+
+        energia_u = max(energia_u, 1e-9)
+        energia_v = max(energia_v, 1e-9)
+
+        return self._consumo * (1/energia_u + 1/energia_v)
 
 class Vertice:
     def __init__(self, id, X, Y, central=False):
@@ -30,13 +44,24 @@ class Vertice:
         self._bateria = 100
         self._central = central
     
-    def gastar_energia(self, valor):
-        self._bateria -= valor
+    def gastar_energia(self, energia_joules):
+        """
+        Reduz a bateria do sensor com base em um valor.
+        """
+        capacidade_total = 100  # Valor arbitrário da capacidade do sensor, escolhido para fins de teste
+        delta_percentual = (energia_joules / capacidade_total) * 100
+        self._bateria -= delta_percentual
 
     def get_bateria(self):
+        """
+        Retorna a bateria atual do vértice.
+        """
         return self._bateria
 
     def get_posicao(self):
+        """
+        Retorna a posição do vértice.
+        """
         return (self._pos_x, self._pos_y)
 
 class Grafo:
@@ -45,19 +70,25 @@ class Grafo:
         self.arestas = {} 
 
     def adicionar_vertice(self, id, x, y):
+        """
+        Adiciona vértice ao grafo a partir de um id e coordenadas cartesianas.
+        """
         self.vertices[id] = Vertice(id, x, y)
 
     def adicionar_aresta(self, u, v, distancia):
+        """
+        Adiciona aresta ao grafo a partir dos vértices que ela conecta e o valor da distância.
+        """
         key = frozenset({u, v})
         self.arestas[key] = Aresta(u, v, distancia)
 
     def get_aresta(self, u, v):
         return self.arestas[frozenset({u, v})]
-
-    def peso(self, u, v):
-        return self.arestas[frozenset({u, v})].peso_para_mst()
     
     def imprimir(self):
+        """
+        Imprime vértices e arestas do grafo.
+        """
         print("\n=== VÉRTICES ===")
         for vid, v in self.vertices.items():
             print(f"ID: {vid} | pos=({v._pos_x}, {v._pos_y})")
@@ -99,15 +130,19 @@ class Grafo:
         return False
 
     def kruskal(self):
+        """
+        Roda o algoritmo kruskal para geração da MST.
+        """
         n = len(self.vertices)
         uf = UnionFind(n)
 
         # ordena por peso dinâmico
         arestas_ordenadas = sorted(
             self.arestas.values(),
-            key=lambda a: a.peso_para_mst()
+            key=lambda a: a.peso_para_mst(self)
         )
 
+        # vetor para armazenar arestas da mst
         mst = []
 
         for aresta in arestas_ordenadas:
@@ -123,6 +158,7 @@ class Grafo:
         return mst
 
 class UnionFind:
+    # Classe utilizada para identificar se há um ciclo no grafo
     def __init__(self, n):
         self.pai = list(range(n))
         self.rank = [0] * n

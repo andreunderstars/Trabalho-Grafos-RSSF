@@ -41,13 +41,14 @@ class Tela:
         if self.grafo is None:
             return
         
-        for sensor in self.grafo.vertices:
+        for sensor_id in self.grafo.vertices:
+            sensor = self.grafo.vertices[sensor_id]
 
-            if sensor.central:
+            if sensor_id == 0:
                 cor = (0, 0, 255)  # Azul para a central
             else:
                 
-                bateria = sensor.bateria
+                bateria = sensor.get_bateria()
 
                 if bateria >= 80:
                     cor = (0, 255, 0)  # Verde para bateria alta

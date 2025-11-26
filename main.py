@@ -53,7 +53,7 @@ def enviar_sinal_ate_central(G, pai, sensor_id, custo_sensor=0.01):
 
 
 if __name__ == "__main__":
-    num = 50
+    num = 400
     dataset_path = f"data/Rede {num}.txt"
     G = Grafo()
     sensores = []
@@ -91,14 +91,15 @@ if __name__ == "__main__":
                     [sensor_v._pos_x, sensor_v._pos_y]
                 )
                 
-                if distancia <= 200:
+                if distancia <= 100:
                     aresta = Aresta(sensor_u._id, sensor_v._id, distancia)
                     arestas.append(aresta)
                     G.adicionar_aresta(sensor_u._id, sensor_v._id, distancia)
 
     for sensor in range(1, num+1):
         G.info_sensor(sensor)
-    visualizer = Tela(600, 600, G)
+    
+    visualizer = Tela(1000, 800, G)
     visualizer.run()
     i = 0
     # Simulação (um while infinito)

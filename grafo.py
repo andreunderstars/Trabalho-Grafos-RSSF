@@ -33,6 +33,9 @@ class Vertice:
     def gastar_energia(self, valor):
         self._bateria -= valor
 
+    def get_bateria(self):
+        return self._bateria
+
     def get_posicao(self):
         return (self._pos_x, self._pos_y)
 

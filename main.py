@@ -42,22 +42,21 @@ def enviar_sinal_ate_central(G, pai, sensor_id, custo_sensor=0.01):
         proximo = pai[atual]
 
         # consumo do sensor
-        G.vertices[atual].gastar_energia(custo_sensor)
+        # G.vertices[atual].gastar_energia(custo_sensor)
 
         # consumo da aresta
         aresta = G.get_aresta(atual, proximo)
-        aresta.gastar_energia()
+        aresta.gastar_energia(G)
 
         # avança para o próximo vértice no caminho
         atual = proximo
 
 
 if __name__ == "__main__":
-    num = 400
+    num = 50
     dataset_path = f"data/Rede {num}.txt"
     G = Grafo()
     sensores = []
-    arestas = []
 
     # Lê cada linha do arquivo e cria um vértice para cada uma
 
@@ -91,16 +90,12 @@ if __name__ == "__main__":
                     [sensor_v._pos_x, sensor_v._pos_y]
                 )
                 
-                if distancia <= 100:
+                if distancia <= 200:
                     aresta = Aresta(sensor_u._id, sensor_v._id, distancia)
-                    arestas.append(aresta)
                     G.adicionar_aresta(sensor_u._id, sensor_v._id, distancia)
-
-    for sensor in range(1, num+1):
-        G.info_sensor(sensor)
     
-    visualizer = Tela(1000, 800, G)
-    visualizer.run()
+    # visualizer = Tela(1000, 800, G)
+    # visualizer.run()
     i = 0
     # Simulação (um while infinito)
     while not G.sensor_morto():
@@ -114,7 +109,7 @@ if __name__ == "__main__":
             for aresta in mst:
                 u = aresta._u
                 v = aresta._v
-                w = aresta.peso_para_mst()
+                w = aresta.peso_para_mst(G)
 
                 adj[u].append((v, w))
                 adj[v].append((u, w))

@@ -1,7 +1,7 @@
 import math
 
 from grafo import Vertice, Aresta, Grafo
-
+from visualizer import Tela
 from collections import defaultdict, deque
 
 def bfs_pais(adj, raiz=0):
@@ -98,7 +98,8 @@ if __name__ == "__main__":
 
     for sensor in range(1, num+1):
         G.info_sensor(sensor)
-
+    visualizer = Tela(600, 600, G)
+    visualizer.run()
     i = 0
     # Simulação (um while infinito)
     while not G.sensor_morto():
@@ -129,7 +130,7 @@ if __name__ == "__main__":
             enviar_sinal_ate_central(G, pais, j)
 
         i += 1
-
+    
     for sensor in range(1, num+1):
         G.info_sensor(sensor)
     print("Iterações:", i)
